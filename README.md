@@ -43,3 +43,5 @@ Provides a user-friendly interface with a **template & report editor**, allowing
     <img src="Documentation/ERD.png" alt="ERD" width="700">
     <p><strong>ERD</strong> - Schema of database</p>
 </div>
+
+Test change for GitHub PR Notifier project.
