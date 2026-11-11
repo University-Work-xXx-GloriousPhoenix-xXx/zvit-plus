@@ -2,6 +2,7 @@ import type { ComponentPropsWithoutRef } from "react";
 import { forwardRef } from "react";
 
 import cl from "./BoolCheckbox.module.css";
+import { generateId } from "@/shared/utils/uuid";
 
 type CheckboxProps = {
     label: string;
@@ -10,7 +11,7 @@ type CheckboxProps = {
 
 export const BoolCheckbox = forwardRef<HTMLInputElement, CheckboxProps>(
     ({ label, error, id, ...rest }, ref) => {
-        const checkboxId = id ?? crypto.randomUUID();
+        const checkboxId = id ?? generateId();
 
         return (
             <div className={cl.Wrapper}>
