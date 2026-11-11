@@ -13,10 +13,7 @@ namespace ZvitPlus.API.Extensions.BuildExtensions
         public static IServiceCollection AddApplicationServices(
             this IServiceCollection services)
         {
-            services.AddAutoMapper(typeof(AuthProfile));
-            services.AddAutoMapper(typeof(UserProfile));
-            services.AddAutoMapper(typeof(FileProfile));
-            services.AddAutoMapper(typeof(TemplateTypeProfile));
+            services.AddAutoMapper(cfg => { }, typeof(AuthProfile));
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IAuthService, AuthService>();

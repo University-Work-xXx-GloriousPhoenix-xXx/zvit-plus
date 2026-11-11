@@ -1,6 +1,8 @@
 using ZvitPlus.API.Extensions.AuthorizationExtensions;
 using ZvitPlus.API.Extensions.BuildExtensions;
 
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Infrastructure

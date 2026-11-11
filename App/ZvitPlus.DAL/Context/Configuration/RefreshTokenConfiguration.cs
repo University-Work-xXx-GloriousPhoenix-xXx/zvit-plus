@@ -14,23 +14,19 @@ namespace ZvitPlus.DAL.Context.Configuration
 
             builder.Property(rf => rf.Token)
                 .HasColumnName("token")
-                .HasColumnType("varchar(512)")
                 .HasMaxLength(512)
                 .IsRequired();
 
             builder.Property(rf => rf.CreatedAt)
                 .HasColumnName("created_at")
-                .HasColumnType("datetime")
                 .IsRequired();
 
             builder.Property(rf => rf.ExpiresAt)
                 .HasColumnName("expires_at")
-                .HasColumnType("datetime")
                 .IsRequired();
 
             builder.Property(rf => rf.IsRevoked)
                 .HasColumnName("is_revoked")
-                .HasColumnType("bit")
                 .HasDefaultValue(false)
                 .IsRequired();
 

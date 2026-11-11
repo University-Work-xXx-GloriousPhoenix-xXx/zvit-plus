@@ -13,7 +13,6 @@ namespace ZvitPlus.DAL.Context.Configuration
 
             builder.Property(e => e.Id)
                 .HasColumnName("id")
-                .HasColumnType("uniqueidentifier")
                 .IsRequired()
                 .ValueGeneratedOnAdd();
         }

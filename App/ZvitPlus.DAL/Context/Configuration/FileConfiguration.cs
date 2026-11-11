@@ -14,46 +14,38 @@ namespace ZvitPlus.DAL.Context.Configuration
 
             builder.Property(f => f.Name)
                 .HasColumnName("name")
-                .HasColumnType("nvarchar(64)")
                 .HasMaxLength(64)
                 .IsRequired();
 
             builder.Property(f => f.AuthorId)
                 .HasColumnName("author")
-                .HasColumnType("uniqueidentifier")
                 .IsRequired();
 
             builder.Property(f => f.IsPrivate)
                 .HasColumnName("is_private")
-                .HasColumnType("bit")
                 .HasDefaultValue(false)
                 .IsRequired();
 
             builder.Property(f => f.IsDeleted)
                 .HasColumnName("is_deleted")
-                .HasColumnType("bit")
                 .HasDefaultValue(false)
                 .IsRequired();
 
             builder.Property(f => f.FileSize)
                 .HasColumnName("file_size")
-                .HasColumnType("bigint")
                 .IsRequired();
 
             builder.Property(f => f.FilePath)
                 .HasColumnName("file_path")
-                .HasColumnType("varchar(255)")
                 .HasMaxLength(255)
                 .IsRequired();
 
             builder.Property(f => f.CreatedAt)
                 .HasColumnName("created_at")
-                .HasColumnType("datetime")
                 .IsRequired();
 
             builder.Property(f => f.UpdatedAt)
                 .HasColumnName("updated_at")
-                .HasColumnType("datetime")
                 .IsRequired();
 
             builder.HasOne(f => f.Author)

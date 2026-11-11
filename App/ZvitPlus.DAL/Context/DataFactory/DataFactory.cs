@@ -69,12 +69,12 @@ namespace ZvitPlus.DAL.Context.DataFactory
         {
             var templateTypes = new List<TemplateType>()
             {
-                new() { Name = "Invoice" },
-                new() { Name = "Contract" },
-                new() { Name = "Report" },
-                new() { Name = "Letter" },
-                new() { Name = "Form" },
-                new() { Name = "Certificate" }
+                new() { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-000000000001"), Name = "Invoice" },
+                new() { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-000000000002"), Name = "Contract" },
+                new() { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-000000000003"), Name = "Report" },
+                new() { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-000000000004"), Name = "Letter" },
+                new() { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-000000000005"), Name = "Form" },
+                new() { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-000000000006"), Name = "Certificate" }
             };
 
             await _unitOfWork.BeginTransactionAsync(ct);
