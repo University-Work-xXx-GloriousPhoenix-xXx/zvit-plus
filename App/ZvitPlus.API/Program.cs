@@ -16,7 +16,11 @@ builder.Services.AddControllersWithJson();
 var app = builder.Build();
 
 app.UseSwaggerIfDevelopment();
-app.UseHttpsRedirection();
+if (!app.Configuration.GetValue<bool>("DisableHttpsRedirection"))
+{
+    app.UseHttpsRedirection();
+}
+
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();

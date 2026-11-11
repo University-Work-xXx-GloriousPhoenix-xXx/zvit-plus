@@ -18,10 +18,11 @@ namespace ZvitPlus.BLL.Services.Interfaces
             UserContext context,
             FileType ft,
             int page = 1,
-            int pageSize = 10, 
+            int pageSize = 10,
             SearchFileEntityDTO? search = null,
             CancellationToken ct = default);
         Task<PagedResponse<GetFileEntityDTO>> GetMyPageAsync(Guid userId, FileType ft, int page, int pageSize, CancellationToken ct = default);
         Task<Stream> ReadFromFileAsync(string filePath, CancellationToken ct = default);
+        string GetFullPath(string storedPath);
     }
 }

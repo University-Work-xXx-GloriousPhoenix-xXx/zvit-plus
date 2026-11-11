@@ -39,8 +39,8 @@ namespace ZvitPlus.BLL.Services.Implementations
             AppLogger.LogActionStarted(_logger, "збереження фалу");
 
             var fileId = Guid.NewGuid();
-            var filePath = GetDirectoryPath(authorId, dto.Type, fileId);
-            var dirPath = Path.GetDirectoryName(filePath)!;
+            var relativePath = GetRelativePath(authorId, dto.Type, fileId);
+            var fullPath = GetFullPath(relativePath);
 
             var entity = new FileEntity
             {
@@ -48,22 +48,17 @@ namespace ZvitPlus.BLL.Services.Implementations
                 Name = Path.GetFileNameWithoutExtension(dto.Name),
                 AuthorId = authorId,
                 FileSize = dto.File.Length,
-                FilePath = filePath,
+                FilePath = relativePath,
                 IsPrivate = dto.IsPrivate,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
 
-            if (!Directory.Exists(dirPath))
-            {
-                Directory.CreateDirectory(dirPath!);
-            }
-
-            await SaveToDiskAsync(dto.File, filePath, ct);
+            await SaveToDiskAsync(dto.File, fullPath, ct);
 
             _unitOfWork.Files.Add(entity);
 
-            return (fileId, filePath);
+            return (fileId, fullPath);
         }
 
         public async Task<FileEntity> UpdateAsync(Guid entityId, UpdateFileDTO dto, CancellationToken ct = default)
@@ -198,7 +193,7 @@ namespace ZvitPlus.BLL.Services.Implementations
             //    await _unitOfWork.CompleteAsync(ct);
             //    await _unitOfWork.CommitTransactionAsync(ct);
 
-                AppLogger.LogActionCompleted(_logger, "Видалення файлу", entityId);
+            AppLogger.LogActionCompleted(_logger, "Видалення файлу", entityId);
             //}
             //catch
             //{
@@ -344,10 +339,11 @@ namespace ZvitPlus.BLL.Services.Implementations
             return response;
         }
 
-        private string GetDirectoryPath(Guid authorId, FileType ft, Guid entityId)
-        {
-            return $"{_basePath}\\{authorId}\\{ft}\\{entityId}.{_fileExtension}";
-        }
+        private static string GetRelativePath(Guid authorId, FileType ft, Guid entityId)
+            => Path.Combine(authorId.ToString(), ft.ToString(), $"{entityId}.{_fileExtension}");
+
+        public string GetFullPath(string storedPath)
+            => Path.Combine(_basePath, storedPath);
 
         private async Task SaveToDiskAsync(Stream stream, string path, CancellationToken ct = default)
         {
@@ -377,7 +373,7 @@ namespace ZvitPlus.BLL.Services.Implementations
 
             AppLogger.LogActionCompleted(_logger, "Збереження файлу");
         }
-            
+
         public async Task<Stream> ReadFromFileAsync(string filePath, CancellationToken ct = default)
         {
             AppLogger.LogActionStarted(_logger, "читання з файлу");
@@ -388,14 +384,16 @@ namespace ZvitPlus.BLL.Services.Implementations
                 throw new BusinessException("Шлях до файлу не може бути порожнім");
             }
 
-            if (!File.Exists(filePath))
+            var fullPath = GetFullPath(filePath);
+
+            if (!File.Exists(fullPath))
             {
                 AppLogger.LogActionFailed(_logger, "читання з файлу");
                 throw new BusinessException("Файл не існує");
             }
 
             var stream = new FileStream(
-                filePath,
+                fullPath,
                 FileMode.Open,
                 FileAccess.Read,
                 FileShare.Read,
@@ -406,6 +404,6 @@ namespace ZvitPlus.BLL.Services.Implementations
 
             return stream;
         }
-    
+
     }
 }
