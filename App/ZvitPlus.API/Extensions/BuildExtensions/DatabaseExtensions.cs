@@ -11,7 +11,7 @@ namespace ZvitPlus.API.Extensions.BuildExtensions
             )
         {
             services.AddDbContext<ZvitPlusDbContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+                options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
             return services;
         }

@@ -14,7 +14,6 @@ namespace ZvitPlus.DAL.Context.Configuration
 
             builder.Property(tt => tt.Name)
                 .HasColumnName("name")
-                .HasColumnType("nvarchar(32)")
                 .HasMaxLength(32)
                 .IsRequired();
 

@@ -14,12 +14,10 @@ namespace ZvitPlus.DAL.Context.Configuration
 
             builder.Property(t => t.TemplateTypeId)
                 .HasColumnName("template_type")
-                .HasColumnType("uniqueidentifier")
                 .IsRequired();
 
             builder.Property(t => t.FileId)
                 .HasColumnName("file")
-                .HasColumnType("uniqueidentifier")
                 .IsRequired();
 
             builder.HasOne(t => t.TemplateType)
