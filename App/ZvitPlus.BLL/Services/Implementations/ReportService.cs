@@ -32,6 +32,7 @@ namespace ZvitPlus.BLL.Services.Implementations
                 // Делегувати створення файловому сервісу; Отримати id запису файлу
                 var innerDto = _mapper.Map<CreateFileDTO>(dto);
                 var (fileId, filePath) = await _fileService.AddAsync(innerDto, context.UserId, ct);
+                createdFilePath = filePath;
 
                 // Створити об'єкт звіту
                 AppLogger.LogActionStarted(_logger, "збереження звіту");
@@ -178,6 +179,9 @@ namespace ZvitPlus.BLL.Services.Implementations
             }
 
             var currentFileEntity = await _unitOfWork.Files.GetByIdAsync(entity.FileId, ct);
+            var currentFullPath = currentFileEntity is not null
+                ? _fileService.GetFullPath(currentFileEntity.FilePath)
+                : null;
             string? fileBackupPath = null;
 
             await _unitOfWork.BeginTransactionAsync(ct);
@@ -188,10 +192,10 @@ namespace ZvitPlus.BLL.Services.Implementations
                 {
                     var innerDto = _mapper.Map<UpdateFileDTO>(dto);
 
-                    if (currentFileEntity != null && File.Exists(currentFileEntity.FilePath))
+                    if (currentFullPath != null && File.Exists(currentFullPath))
                     {
-                        fileBackupPath = currentFileEntity.FilePath + ".backup";
-                        File.Copy(currentFileEntity.FilePath, fileBackupPath, true);
+                        fileBackupPath = currentFullPath + ".backup";
+                        File.Copy(currentFullPath, fileBackupPath, true);
                     }
 
                     await _fileService.UpdateAsync(entity.FileId, innerDto, ct);
@@ -207,15 +211,15 @@ namespace ZvitPlus.BLL.Services.Implementations
             {
                 await _unitOfWork.RollbackTransactionAsync(ct);
 
-                if (fileBackupPath is not null && currentFileEntity != null)
+                if (fileBackupPath is not null && currentFullPath != null)
                 {
-                    if (File.Exists(currentFileEntity.FilePath))
+                    if (File.Exists(currentFullPath))
                     {
-                        File.Delete(currentFileEntity.FilePath);
+                        File.Delete(currentFullPath);
                     }
                     if (File.Exists(fileBackupPath))
                     {
-                        File.Move(fileBackupPath, currentFileEntity.FilePath);
+                        File.Move(fileBackupPath, currentFullPath);
                     }
                 }
 

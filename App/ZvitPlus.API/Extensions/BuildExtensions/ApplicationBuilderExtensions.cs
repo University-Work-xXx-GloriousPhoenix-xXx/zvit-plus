@@ -25,18 +25,36 @@ namespace ZvitPlus.API.Extensions.BuildExtensions
         }
 
         public static WebApplication EnsureDatabaseCreated(
-            this WebApplication app)
+            this WebApplication app,
+            int maxAttempts = 10)
         {
             using var scope = app.Services.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<ZvitPlusDbContext>();
-            db.Database.EnsureCreated();
-            return app;
+            var logger = scope.ServiceProvider
+                .GetRequiredService<ILoggerFactory>()
+                .CreateLogger("DatabaseInit");
+
+            for (var attempt = 1; ; attempt++)
+            {
+                try
+                {
+                    db.Database.EnsureCreated();
+                    logger.LogInformation("База даних готова");
+                    return app;
+                }
+                catch (Exception ex) when (attempt < maxAttempts)
+                {
+                    logger.LogWarning("БД недоступна (спроба {Attempt}/{Max}): {Message}",
+                        attempt, maxAttempts, ex.Message);
+                    Thread.Sleep(TimeSpan.FromSeconds(5));
+                }
+            }
         }
 
         public async static Task<WebApplication> SeedTestData(
             this WebApplication app)
         {
-            if (app.Environment.IsDevelopment())
+            if (app.Configuration.GetValue<bool>("SeedTestData"))
             {
                 using var scope = app.Services.CreateScope();
                 var dataFactory = scope.ServiceProvider.GetRequiredService<IDataFactory>();
