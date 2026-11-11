@@ -2,6 +2,7 @@ import type { ComponentPropsWithoutRef } from "react";
 import { forwardRef } from "react";
 
 import cl from "./Select.module.css";
+import { generateId } from "@/shared/utils/uuid";
 
 export type SelectOption = {
     value: string;
@@ -16,7 +17,7 @@ type SelectProps = {
 
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     ({ label, options, error, id, ...rest }, ref) => {
-        const selectId = id ?? crypto.randomUUID();
+        const selectId = id ?? generateId();
 
         return (
             <div className={cl.Wrapper}>

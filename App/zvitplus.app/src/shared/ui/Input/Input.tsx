@@ -2,6 +2,7 @@ import type { ComponentPropsWithoutRef } from "react";
 import { forwardRef } from "react";
 
 import cl from './Input.module.css';
+import { generateId } from "@/shared/utils/uuid";
 
 type InputProps = {
     label: string;
@@ -10,7 +11,7 @@ type InputProps = {
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
     ({ label, error, id, ...rest }, ref) => {
-        const inputId = id ?? crypto.randomUUID();
+        const inputId = id ?? generateId();
 
         return (
             <div className={cl.Wrapper}>
