@@ -1,0 +1,34 @@
+pipeline {
+    agent any
+    options {
+        disableConcurrentBuilds()
+        buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '3'))
+        timeout(time: 30, unit: 'MINUTES')
+        skipDefaultCheckout(true)
+    }
+    triggers { pollSCM('H/5 * * * *') }
+    parameters { booleanParam(name: 'DEPLOY_TO_UBUNTU', defaultValue: true, description: 'Deploy compiled artifacts to Ubuntu after a successful local build') }
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/University-Work-xXx-GloriousPhoenix-xXx/zvit-plus.git'
+            }
+        }
+        stage('Build locally for Ubuntu') {
+            steps {
+                bat 'powershell.exe -NoProfile -ExecutionPolicy Bypass -File "D:\\ZvitPlus-CICD\\scripts\\Build.ps1" -Source "%WORKSPACE%" -ArtifactDirectory "%WORKSPACE%\\artifacts"'
+            }
+        }
+        stage('Archive release') {
+            steps {
+                archiveArtifacts artifacts: 'artifacts/*.tar.gz,artifacts/*.sha256,artifacts/payload/build-info.json', fingerprint: true
+            }
+        }
+        stage('Deploy to Ubuntu') {
+            when { expression { params.DEPLOY_TO_UBUNTU } }
+            steps {
+                bat 'powershell.exe -NoProfile -ExecutionPolicy Bypass -File "D:\\ZvitPlus-CICD\\scripts\\Deploy.ps1" -ArtifactDirectory "%WORKSPACE%\\artifacts"'
+            }
+        }
+    }
+}
